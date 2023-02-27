@@ -27,7 +27,8 @@ namespace CompanyAPI.Repository
 
         public async Task<Employee> GetEmployeeById(int id)
         {
-            return await _context.Employees.FirstOrDefaultAsync(v => v.Id == id);
+           var emp = await (_context.Employees.Where(v=>v.Id==id).FirstOrDefaultAsync());
+            return emp;
         }
 
         public async Task<List<Employee>> GetEmployees()

@@ -33,7 +33,7 @@ namespace CompanyAPI.Repository
 
         public async Task<Company> GetCompanyById(int id)
         {
-            return await _context.Companies.FirstOrDefaultAsync(v => v.Id == id);
+            return await _context.Companies.Include(x => x.Employees).Where(x => x.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task UpdateCompany(int id, Company company)

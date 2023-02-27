@@ -4,25 +4,27 @@ import axios from "axios";
 import Header from "./Header";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { json } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
 const Company = () => {
+
+  const navigate=new useNavigate();
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const [companyName, setCompanyName] = useState("");
-  const [companyAddress, setCompanyAddress] = useState("");
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
   const [country, setCountry] = useState("");
   const [gst, setGst] = useState(0);
   const [designation, setDesignation] = useState("");
   const [leave, setLeave] = useState(0);
 
   const [editId, setEditId] = useState("");
-  const [editcompanyname, setEditCompanyName] = useState("");
-  const [editcompanyaddress, setEditCompanyAddress] = useState("");
+  const [editname, setEditName] = useState("");
+  const [editaddress, setEditAddress] = useState("");
   const [editcountry, setEditCountry] = useState("");
   const [editgst, setEditGst] = useState(0);
   const [editdesignation, setEditDesignation] = useState("");
@@ -48,17 +50,18 @@ const Company = () => {
   };
 
   const handleSave = () => {
+    let token=localStorage.getItem("currentUser");
     const url = "https://localhost:7121/api/Company";
     const data = {
-      companyName: companyName,
-      companyAddress: companyAddress,
+      name: name,
+      address: address,
       country: country,
       gst: gst,
       designation: designation,
       leave: leave,
     };
     axios
-      .post(url, data)
+      .post(url, data,{headers:{Authorization:`Bearer ${token}`},})
       .then((result) => {
         getData();
         clear();
@@ -70,14 +73,14 @@ const Company = () => {
   };
 
   const clear = () => {
-    setCompanyName("");
-    setCompanyAddress("");
+    setName("");
+    setAddress("");
     setCountry("");
     setGst(0);
     setDesignation("");
     setLeave(0);
-    setEditCompanyName("");
-    setEditCompanyAddress("");
+    setEditName("");
+    setEditAddress("");
     setEditCountry("");
     setEditGst(0);
     setEditDesignation("");
@@ -102,13 +105,14 @@ const Company = () => {
   };
 
   const handleEdit = (id) => {
+    let token=localStorage.getItem("currentUser");
     // alert(id);
     handleShow();
     axios
-      .get(`https://localhost:7121/api/Company/${id}`)
+      .get(`https://localhost:7121/api/Company/${id}`,{headers:{Authorization:`Bearer ${token}`},})
       .then((result) => {
-        setEditCompanyName(result.data.companyName);
-        setEditCompanyAddress(result.data.companyAddress);
+        setEditName(result.data.name);
+        setEditAddress(result.data.address);
         setEditCountry(result.data.country);
         setEditGst(result.data.gst);
         setEditDesignation(result.data.designation);
@@ -121,9 +125,10 @@ const Company = () => {
   };
 
   const handleDelete = (id) => {
+    let token=localStorage.getItem("currentUser");
     if (window.confirm("Are you sure to delete this data") == true) {
       axios
-        .delete(`https://localhost:7121/api/Company/${id}`)
+        .delete(`https://localhost:7121/api/Company/${id}`,{headers:{Authorization:`Bearer ${token}`},})
         .then((result) => {
           if (result.status === 200) {
             toast.success("Company has been deleted");
@@ -137,18 +142,19 @@ const Company = () => {
   };
 
   const handleUpdate = () => {
+    let token=localStorage.getItem("currentUser");
     const uRl = `https://localhost:7121/api/Company/${editId}`;
     const data = {
       id: editId,
-      companyName: editcompanyname,
-      companyAddress: editcompanyaddress,
+      name: editname,
+      address: editaddress,
       country: editcountry,
       gst: editgst,
       designation: editdesignation,
       leave: editleave,
     };
     axios
-      .put(uRl, data)
+      .put(uRl, data,{headers:{Authorization:`Bearer ${token}`},})
       .then((result) => {
         handleClose();
         getData();
@@ -159,6 +165,11 @@ const Company = () => {
         toast.error(error);
       });
   };
+
+ const Employees =(id)=>{
+  navigate('/employees', { state: { id: id } });
+ }
+
   return (
     <Fragment>
       <div>
@@ -176,7 +187,7 @@ const Company = () => {
               data-toggle="modal"
               data-target="#newModal"
             >
-              New Employee
+             + New Company
             </button>
           </div>
         </div>
@@ -189,8 +200,8 @@ const Company = () => {
                 <th>Address</th>
                 <th>Country</th>
                 <th>GST</th>
-                <th>Designation</th>
-                <th>Leave</th>
+                {/* <th>Designation</th> */}
+                {/* <th>Leave</th> */}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -200,12 +211,12 @@ const Company = () => {
                     return (
                       <tr key={index}>
                         <td>{index + 1}</td>
-                        <td>{item.companyName}</td>
-                        <td>{item.companyAddress}</td>
+                        <td>{item.name}</td>
+                        <td>{item.address}</td>
                         <td>{item.country}</td>
                         <td>{item.gst}</td>
-                        <td>{item.designation}</td>
-                        <td>{item.leave}</td>
+                        {/* <td>{item.designation}</td> */}
+                        {/* <td>{item.leave}</td> */}
                         <td colSpan={2}>
                           <button
                             className="btn btn-info"
@@ -222,6 +233,14 @@ const Company = () => {
                           >
                             Delete
                           </button>
+                          <button
+                            className="btn btn-info m-1"
+                            onClick={() => Employees(item.id)}
+                            data-target="#editModal"
+                            data-toggle="modal"
+                          >
+                            Employees
+                          </button>
                         </td>
                       </tr>
                     );
@@ -236,7 +255,7 @@ const Company = () => {
               <div class="modal-content">
                 {/* <!-- Header --> */}
                 <div class="modal-header">
-                  <div class="modal-tittle text-primary">New Employee</div>
+                  <div class="modal-tittle text-primary">New Company</div>
                   <button class="close" data-dismiss="modal">
                     <span>&times;</span>
                   </button>
@@ -252,8 +271,8 @@ const Company = () => {
                         type="text"
                         className="form-control"
                         placeholder="Enter Name"
-                        value={companyName}
-                        onChange={(e) => setCompanyName(e.target.value)}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                       />
                     </div>
                   </div>
@@ -269,8 +288,8 @@ const Company = () => {
                         type="text"
                         className="form-control"
                         placeholder="Enter Address"
-                        value={companyAddress}
-                        onChange={(e) => setCompanyAddress(e.target.value)}
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
                       />
                     </div>
                   </div>
@@ -302,7 +321,7 @@ const Company = () => {
                       />
                     </div>
                   </div>
-                  <div class="form-group row">
+                  {/* <div class="form-group row">
                     <label for="txtdesignation" class="text-success col-sm-4">
                       Designation
                     </label>
@@ -315,7 +334,7 @@ const Company = () => {
                         onChange={(e) => setDesignation(e.target.value)}
                       />
                     </div>
-                  </div>
+                  </div> */}
                   <div class="form-group row">
                     <label for="txtleave" class="text-success col-sm-4">
                       Approve Leave
@@ -370,8 +389,8 @@ const Company = () => {
                         type="text"
                         className="form-control"
                         placeholder="Enter Name"
-                        value={editcompanyname}
-                        onChange={(e) => setEditCompanyName(e.target.value)}
+                        value={editname}
+                        onChange={(e) => setEditName(e.target.value)}
                       />
                     </div>
                   </div>
@@ -387,8 +406,8 @@ const Company = () => {
                         type="text"
                         className="form-control"
                         placeholder="Enter Address"
-                        value={editcompanyaddress}
-                        onChange={(e) => setEditCompanyAddress(e.target.value)}
+                        value={editaddress}
+                        onChange={(e) => setEditAddress(e.target.value)}
                       />
                     </div>
                   </div>
@@ -420,7 +439,7 @@ const Company = () => {
                       />
                     </div>
                   </div>
-                  <div class="form-group row">
+                  {/* <div class="form-group row">
                     <label for="txtdesignation" class="text-success col-sm-4">
                       Country
                     </label>
@@ -433,7 +452,7 @@ const Company = () => {
                         onChange={(e) => setEditDesignation(e.target.value)}
                       />
                     </div>
-                  </div>
+                  </div> */}
                   <div class="form-group row">
                     <label for="txtleave" class="text-success col-sm-4">
                       Approve Leave
