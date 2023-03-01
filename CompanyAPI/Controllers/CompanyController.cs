@@ -1,7 +1,11 @@
-﻿using CompanyAPI.Data;
+﻿using AutoMapper;
+using CompanyAPI.Data;
 using CompanyAPI.Models;
+using CompanyAPI.Models.DTO;
 using CompanyAPI.Repository;
+using CompanyAPI.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,36 +17,18 @@ namespace CompanyAPI.Controllers
     public class CompanyController : ControllerBase
     {
         private readonly ICompany _company;
+        private readonly IAuthentication _userService;
+        private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
-        public CompanyController(ICompany company, ApplicationDbContext context)
+        public CompanyController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthentication userService, IMapper mapper, ICompany company)
         {
-            _company = company;
             _context = context;
+            _userManager = userManager;
+            _userService = userService;
+            _mapper = mapper;
+            _company = company;
         }
-        //[HttpGet]
-        //public async Task<IActionResult> Get()
-        //{
-        //    var comp = await (from company in _context.Companies
-        //                      select new
-        //                      {
-        //                          Id = company.Id,
-        //                          Name = company.Name,
-        //                      }).ToListAsync();
-        //    return Ok(comp);
-        //}
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> CompanyDetails(int id)
-        //{
-        //    var comp = await (_context.Companies.Include(x => x.Employees).Where(x => x.Id == id).FirstOrDefaultAsync());
-        //    return Ok(comp);
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> Post([FromBody] Company company)
-        //{
-        //    await _context.Companies.AddAsync(company);
-        //    await _context.SaveChangesAsync();
-        //    return StatusCode(StatusCodes.Status201Created);
-        //}
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -56,9 +42,10 @@ namespace CompanyAPI.Controllers
             return await _company.GetCompanyById(id);
         }
         [HttpPost]
-        public async Task Post([FromBody] Company company)
+        public async Task<IActionResult> Post([FromBody] Company company)
         {
             await _company.AddCompany(company);
+            return Ok(company);
         }
         [HttpPut("{id}")]
         public async Task Update(int id, [FromBody] Company company)
@@ -74,9 +61,17 @@ namespace CompanyAPI.Controllers
         [Route("Employees")]
         public IActionResult Employee(int id)
         {
-            var employees = _context.Employees.Where(e => e.CompanyId == id).ToList();
+            var employees = _context.Employee.Where(e => e.CompanyId == id).ToList();
             if (employees == null) return NotFound("No Employee In This Company");
             return Ok(employees);
+        }
+        [HttpGet]
+        [Route("Designations")]
+        public IActionResult Designation(int id)
+        {
+            var designations = _context.Designations.Where(e => e.CompanyId == id);
+            if (designations == null) return NotFound("No Designation In This Company");
+            return Ok(designations);
         }
     }
 }

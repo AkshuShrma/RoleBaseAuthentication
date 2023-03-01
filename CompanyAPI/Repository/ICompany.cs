@@ -1,4 +1,5 @@
 ﻿using CompanyAPI.Models;
+using CompanyAPI.Repository;
 
 namespace CompanyAPI.Repository
 {

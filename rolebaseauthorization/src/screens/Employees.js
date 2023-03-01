@@ -37,7 +37,7 @@ const Employees = () => {
 
   useEffect(() => {
     getData(id);
-  }, []);
+  }, [id]);
 
   const getData = (id) => {
     //const token = localStorage.getItem('currentUser');
@@ -125,9 +125,9 @@ const Employees = () => {
       axios
         .delete(`https://localhost:7121/api/Employee/${id}`)
         .then((result) => {
-          if (result.status) {
+          if (result.status === 200) {
+              getData(id);
             toast.success("Employee has been deleted");
-            getData();
           }
         })
         .catch((error) => {
@@ -135,6 +135,10 @@ const Employees = () => {
         });
     }
   };
+
+  const Designation =(id)=>{
+    navigate('/designation', { state: { id: id } });
+   }
 
   return (
     <div>
@@ -156,13 +160,12 @@ const Employees = () => {
           </button>
         </div>
       </div>
-      <div className="col-9 m-2 p-2">
+      <div className="col-10 m-2 p-2">
         <table className="table table-bordered table-striped table-active">
           <thead>
             <tr>
               <th>Name</th>
               <th>Address</th>
-              <th>Pancard</th>
               <th>Account Number</th>
               <th>PFNumber</th>
               <th>PANCard</th>
@@ -175,7 +178,7 @@ const Employees = () => {
                 ? data.map((item, index) => {
                     return (
                       <tr key={index}>
-                        <td>{index + 1}</td>
+                         {/* <td>{index + 1}</td>  */}
                         <td>{item.name}</td>
                         <td>{item.address}</td>
                         <td>{item.accountNumber}</td>
@@ -198,6 +201,14 @@ const Employees = () => {
                             onClick={() => handleDelete(item.id)}
                           >
                             Delete
+                          </button>
+                          <button
+                            className="btn btn-info m-1"
+                            onClick={() => Designation(item.id)}
+                            data-target="#editModal"
+                            data-toggle="modal"
+                          >
+                            Designation
                           </button>
                         </td>
                       </tr>

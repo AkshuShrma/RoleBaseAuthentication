@@ -1,5 +1,6 @@
 ﻿using CompanyAPI.Data;
 using CompanyAPI.Models;
+using CompanyAPI.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,35 +11,42 @@ namespace CompanyAPI.Controllers
     [ApiController]
     public class DesignationController : ControllerBase
     {
+        private readonly IDesignationRepo _designation;
         private readonly ApplicationDbContext _context;
-        public DesignationController(ApplicationDbContext context)
+        public DesignationController(ApplicationDbContext context, IDesignationRepo designation)
         {
             _context = context;
+            _designation = designation;
         }
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetDesignations()
         {
-            var desg = await (from desgn in _context.Designations
-                              select new
-                              {
-                                  Id = desgn.Id,
-                                  Name = desgn.Name,
-                                  CompanyId= desgn.CompanyId,
-                              }).ToListAsync();
-            return Ok(desg);
+            var Desg = await _designation.GetDesignation();
+            if (Desg == null) return BadRequest("No Desg Found");
+            return Ok(Desg);
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> DesDetails(int id)
+        public async Task<IActionResult> GetDesgById(int id)
         {
-            var desg = await(_context.Designations.Include(x=>x.Employees).Where(x=>x.Id== id).FirstOrDefaultAsync());
+            var desg = await _designation.GetDesignationById(id);
+            if (desg == null) return BadRequest("You Have To Add Designations");
             return Ok(desg);
         }
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]Designation designation)
+        public async Task<IActionResult> Post([FromBody] Designation designation)
         {
-            await _context.Designations.AddAsync(designation);
-            await _context.SaveChangesAsync();
-            return StatusCode(StatusCodes.Status201Created);
+            await _designation.AddDesignation(designation);
+            return Ok(designation);
+        }
+        [HttpPut("{id}")]
+        public async Task Update(int id, [FromBody] Designation designation)
+        {
+            await _designation.UpdateDesignation(id, designation);
+        }
+        [HttpDelete("{id}")]
+        public async Task Delete(int id)
+        {
+            await _designation.DeleteDesignation(id);
         }
     }
 }

@@ -1,8 +1,12 @@
-﻿using CompanyAPI.Data;
+﻿using AutoMapper;
+using CompanyAPI.Data;
 using CompanyAPI.Models;
+using CompanyAPI.Models.DTO;
 using CompanyAPI.Repository;
+using CompanyAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,41 +17,17 @@ namespace CompanyAPI.Controllers
     //[Authorize]
     public class EmployeeController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
         private readonly IEmployeeRepo _employee;
-        public EmployeeController(IEmployeeRepo employee, ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAuthentication _userService;
+        private readonly IMapper _mapper;
+        public EmployeeController(IMapper mapper, IAuthentication userService, UserManager<ApplicationUser> userManager, IEmployeeRepo employee)
         {
+            _mapper = mapper;
+            _userService = userService;
+            _userManager = userManager;
             _employee = employee;
-            _context = context;
         }
-        //[HttpGet]
-        //public async Task<IActionResult> Get()
-        //{
-        //    var emp = await (from employee in _context.Employees
-        //                      select new
-        //                      {
-        //                          Id = employee.Id,
-        //                          Name = employee.Name,
-        //                          Address = employee.Address,
-        //                          AccountNumber = employee.Name,
-        //                          NaPANCard = employee.Name,
-        //                          PFAccountNumber = employee.Name,
-        //                      }).ToListAsync();
-        //    return Ok(emp);
-        //}
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> EmpDetails(int id)
-        //{
-        //    var emp = await (_context.Employees.Where(x => x.Id == id).FirstOrDefaultAsync());
-        //    return Ok(emp);
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> Post([FromBody] Employee employee)
-        //{
-        //    await _context.Employees.AddAsync(employee);
-        //    await _context.SaveChangesAsync();
-        //    return StatusCode(StatusCodes.Status201Created);
-        //}
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -65,9 +45,9 @@ namespace CompanyAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Employee employee)
         {
-             await _employee.AddEmployee(employee);
+            await _employee.AddEmployee(employee);
             if (employee == null) return BadRequest("Data Not Added");
-            return StatusCode(StatusCodes.Status200OK);
+            return Ok(employee);
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Employee employee)
@@ -85,3 +65,4 @@ namespace CompanyAPI.Controllers
         }
     }
 }
+

@@ -46,7 +46,7 @@ namespace CompanyAPI.Controllers
             ApplicationUser.PasswordHash = userRegister.Password;
             if (!await _userService.IsUnique(userRegister.UserName)) return NotFound("Go to login");
             var registerUser = await _userService.RegisterUser(ApplicationUser);
-            if (!registerUser) return StatusCode(StatusCodes.Status500InternalServerError);
+            if (!registerUser) return BadRequest("Register First");
             return Ok("Register Successfully");
         }
         [Route("RefreshToken")]

@@ -6,7 +6,7 @@ namespace CompanyAPI.Services
     {
         Task<bool> IsUnique(string userName);
         Task<ApplicationUser?> AuthenticateUser(string userName, string userPassword);
-        Task<bool> RegisterUser(ApplicationUser userCredentials);
+        Task<bool> RegisterUser(ApplicationUser user);
         Task<ApplicationUser?> AddOrUpdateUserRefreshToken(ApplicationUser user);
         Task<ApplicationUser?> CheckUserInDb(string userName);
         public string? GeneratePassword();

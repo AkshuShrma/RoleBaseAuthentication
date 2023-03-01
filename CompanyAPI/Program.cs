@@ -3,6 +3,7 @@ using CompanyAPI.Data;
 using CompanyAPI.Models;
 using CompanyAPI.Models.DTO;
 using CompanyAPI.Repository;
+using CompanyAPI.Repository;
 using CompanyAPI.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,6 +31,7 @@ builder.Services.AddScoped<IAuthentication, Authentication>();
 builder.Services.AddScoped<IRefreshTokenGenerator, RefreshTokenGenerator>();
 builder.Services.AddScoped<ICompany, CompanyRepo>();
 builder.Services.AddScoped<IEmployeeRepo, EmployeeRepo>();
+builder.Services.AddScoped<IDesignationRepo, DesignationRepo>();
 
 //JWT Authentication
 var appsettingSection = builder.Configuration.GetSection("JWTSetting");

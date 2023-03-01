@@ -10,8 +10,8 @@ namespace CompanyAPI.Data
         {
 
         }
-        public DbSet<Company> Companies { get; set; }
-        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Company> Company { get; set; }
+        public DbSet<Employee> Employee { get; set; }
         public DbSet<Designation> Designations { get; set; }
         //public DbSet<LeaveType> LeaveTypes { get; set; }
 

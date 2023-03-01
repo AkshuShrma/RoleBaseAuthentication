@@ -40,8 +40,8 @@ namespace CompanyAPI.Services
             userExist.Role = roleUser.FirstOrDefault();
             if (userExist.RefreshTokenValidDate < DateTime.Now)
             {
-                var userTokenGenerated = _tokenGenrator.GenerateToken(userExist, true);
-                return await AddOrUpdateUserRefreshToken(userTokenGenerated);
+                var userToken = _tokenGenrator.GenerateToken(userExist, true);
+                return await AddOrUpdateUserRefreshToken(userToken);
             }
             return _tokenGenrator.GenerateToken(userExist, false);
         }
@@ -51,26 +51,26 @@ namespace CompanyAPI.Services
             if (userExist == null) return true;
             return false;
         }
-        public async Task<bool> RegisterUser(ApplicationUser userCredentials)
+        public async Task<bool> RegisterUser(ApplicationUser user)
         {
-            if (await _roleManagaer.FindByNameAsync(userCredentials.Role) == null) return false;
-            /* if (userCredentials.Role == SD.Role_Admin)
-             {
-                 var CheckAdmin = await _userManager.GetUsersInRoleAsync(SD.Role_Admin);
-                 if (CheckAdmin.Count == 1) return false;
-             }*/
-            var user = await _userManager.CreateAsync(userCredentials, userCredentials.PasswordHash);
-            if (!user.Succeeded) return false;
-            await _userManager.AddToRoleAsync(userCredentials, userCredentials.Role);
+            if (await _roleManagaer.FindByNameAsync(user.Role) == null) return false;
+            //if (user.Role == SD.Role_Admin)
+            //{
+            //    var CheckAdmin = await _userManager.GetUsersInRoleAsync(SD.Role_Admin);
+            //    if (CheckAdmin.Count == 1) return false;
+            //}
+            var users = await _userManager.CreateAsync(user, user.PasswordHash);
+            if (!users.Succeeded) return false;
+            await _userManager.AddToRoleAsync(user, user.Role);
             return true;
         }
         public async Task<ApplicationUser?> CheckUserInDb(string userName)
         {
-            var checkUserInDb = await _userManager.FindByIdAsync(userName);
-            if (checkUserInDb == null) return null;
-            var userGetRole = await _userManager.GetRolesAsync(checkUserInDb);
-            checkUserInDb.Role = userGetRole?.FirstOrDefault();
-            return checkUserInDb;
+            var UserInDb = await _userManager.FindByIdAsync(userName);
+            if (UserInDb == null) return null;
+            var userGetRole = await _userManager.GetRolesAsync(UserInDb);
+            UserInDb.Role = userGetRole?.FirstOrDefault();
+            return UserInDb;
         }
         public string? GeneratePassword()
         {

@@ -6,39 +6,33 @@ namespace CompanyAPI.Repository
 {
     public class CompanyRepo : ICompany
     {
-
         private readonly ApplicationDbContext _context;
-
         public CompanyRepo(ApplicationDbContext context)
         {
             _context = context;
         }
         public async Task AddCompany(Company company)
         {
-            await _context.Companies.AddAsync(company);
+            await _context.Company.AddAsync(company);
             await _context.SaveChangesAsync();
         }
-
         public async Task DeleteCompany(int id)
         {
-            var companyInDb = await _context.Companies.FindAsync(id);
-            _context.Companies.Remove(companyInDb);
+            var companyInDb = await _context.Company.FindAsync(id);
+            _context.Company.Remove(companyInDb);
             await _context.SaveChangesAsync();
         }
-
         public async Task<List<Company>> GetCompanies()
         {
-            return await _context.Companies.ToListAsync();
+            return await _context.Company.ToListAsync();
         }
-
         public async Task<Company> GetCompanyById(int id)
         {
-            return await _context.Companies.Include(x => x.Employees).Where(x => x.Id == id).FirstOrDefaultAsync();
+            return await _context.Company.Include(x => x.Employees).Where(x => x.Id == id).FirstOrDefaultAsync();
         }
-
         public async Task UpdateCompany(int id, Company company)
         {
-            _context.Companies.Update(company);
+            _context.Company.Update(company);
             await _context.SaveChangesAsync();
         }
     }

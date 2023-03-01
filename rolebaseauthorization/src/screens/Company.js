@@ -18,7 +18,7 @@ const Company = () => {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [country, setCountry] = useState("");
-  const [gst, setGst] = useState(0);
+  const [gst, setGst] = useState("");
   const [designation, setDesignation] = useState("");
   const [leave, setLeave] = useState(0);
 
@@ -26,7 +26,7 @@ const Company = () => {
   const [editname, setEditName] = useState("");
   const [editaddress, setEditAddress] = useState("");
   const [editcountry, setEditCountry] = useState("");
-  const [editgst, setEditGst] = useState(0);
+  const [editgst, setEditGst] = useState("");
   const [editdesignation, setEditDesignation] = useState("");
   const [editleave, setEditLeave] = useState(0);
 
@@ -76,13 +76,13 @@ const Company = () => {
     setName("");
     setAddress("");
     setCountry("");
-    setGst(0);
+    setGst("");
     setDesignation("");
     setLeave(0);
     setEditName("");
     setEditAddress("");
     setEditCountry("");
-    setEditGst(0);
+    setEditGst("");
     setEditDesignation("");
     setEditLeave(0);
     setEditId("");
@@ -172,7 +172,7 @@ const Company = () => {
 
   return (
     <Fragment>
-      <div>
+      <div  getRole='Admin' >
         <ToastContainer />
         <Header />
         <div className="row">
@@ -313,7 +313,7 @@ const Company = () => {
                     </label>
                     <div class="col-8">
                       <input
-                        type="number"
+                        type="text"
                         className="form-control"
                         placeholder="Enter GST"
                         value={gst}
@@ -431,7 +431,7 @@ const Company = () => {
                     </label>
                     <div class="col-8">
                       <input
-                        type="number"
+                        type="text"
                         className="form-control"
                         placeholder="Enter GSt"
                         value={editgst}

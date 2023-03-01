@@ -8,6 +8,8 @@ namespace CompanyAPI.Models.DTO
         public MappingProfile()
         {
             CreateMap<UserRegister, ApplicationUser>().ReverseMap();
+            CreateMap<EmployeeDTO, Employee>().ReverseMap();
+            CreateMap<CompanyDTO, Company>().ReverseMap();
         }
     }
 }

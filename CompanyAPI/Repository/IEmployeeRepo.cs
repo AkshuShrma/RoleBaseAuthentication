@@ -1,4 +1,6 @@
 ﻿using CompanyAPI.Models;
+using CompanyAPI.Repository;
+using System.Linq.Expressions;
 
 namespace CompanyAPI.Repository
 {
