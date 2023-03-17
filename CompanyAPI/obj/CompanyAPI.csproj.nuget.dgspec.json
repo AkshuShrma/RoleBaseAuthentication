@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\core 6.0\\CompanyAPI\\CompanyAPI\\CompanyAPI.csproj": {}
+    "D:\\Ak\\CompanyAPI\\CompanyAPI\\CompanyAPI.csproj": {}
   },
   "projects": {
-    "D:\\core 6.0\\CompanyAPI\\CompanyAPI\\CompanyAPI.csproj": {
+    "D:\\Ak\\CompanyAPI\\CompanyAPI\\CompanyAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\core 6.0\\CompanyAPI\\CompanyAPI\\CompanyAPI.csproj",
+        "projectUniqueName": "D:\\Ak\\CompanyAPI\\CompanyAPI\\CompanyAPI.csproj",
         "projectName": "CompanyAPI",
-        "projectPath": "D:\\core 6.0\\CompanyAPI\\CompanyAPI\\CompanyAPI.csproj",
-        "packagesPath": "C:\\Users\\aksha\\.nuget\\packages\\",
-        "outputPath": "D:\\core 6.0\\CompanyAPI\\CompanyAPI\\obj\\",
+        "projectPath": "D:\\Ak\\CompanyAPI\\CompanyAPI\\CompanyAPI.csproj",
+        "packagesPath": "C:\\Users\\DOTNET\\.nuget\\packages\\",
+        "outputPath": "D:\\Ak\\CompanyAPI\\CompanyAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\aksha\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\DOTNET\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -52,6 +52,10 @@
             "AutoMapper.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
               "version": "[12.0.0, )"
+            },
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
@@ -105,7 +109,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }

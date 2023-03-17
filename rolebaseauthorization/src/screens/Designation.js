@@ -2,30 +2,24 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Button from "react-bootstrap/Button";
 import Header from "./Header";
 import { toast, ToastContainer } from "react-toastify";
 
 const Designation = () => {
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
-  // const [show, setShow] = useState(false);
-  // const handleClose = () => setShow(false);
-  // const handleShow = () => setShow(true);
-  
   const [data, setData] = useState([]);
-  
+
   const [name, setName] = useState("");
   const [type, setType] = useState("");
-  const[companyid,setCompanyId]=useState(0);
+  const [companyId, setCompanyId] = useState("");
 
-  // const [editId, setEditId] = useState("");
-  // const [editname, setEditName] = useState("");
-  // const [editaddress, setEditAddress] = useState("");
-  // const [editaccountnumber, setEditAccountNumber] = useState("");
-  // const [editpfaccountnumber, setEditPFAccountNumber] = useState("");
-  // const[editpancard,setEditPANCard]=useState("");
-  // const[editcompanyid,setEditCompanyId]=useState("");
-  // const [editleave, setEditLeave] = useState(0);
+  const [editId, setEditId] = useState("");
+  const [editName, setEditName] = useState("");
+  const [editType, setEditType] = useState("");
+  const [editCompanyId, setEditCompanyId] = useState("");
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,10 +30,10 @@ const Designation = () => {
   }, [id]);
 
   const getData = (id) => {
-    //const token = localStorage.getItem('currentUser');
+    let token = localStorage.getItem('currentUser');
     // console.log(employeeList)
     axios
-      .get(`https://localhost:7121/api/Company/Designations?id=${id}`)
+      .get(`http://localhost:5135/api/Company/Designations?id=${id}`,{ headers: { Authorization: `Bearer ${token}` } })
       .then((result) => {
         setData(result.data);
       })
@@ -52,41 +46,59 @@ const Designation = () => {
     navigate("/company");
   };
 
-  // const handleEdit = (id) => {
-  //   //let token =localStorage.getItem("currentUser");
-  //   //alert(id);
-  //   handleShow();
-  //   axios
-  //     .get(`https://localhost:7121/api/Employee/${id}`)
-  //     .then((result) => {
-  //       setEditName(result.data.name);
-  //       setEditAddress(result.data.address);
-  //       setEditAccountNumber(result.data.accountNumber);
-  //       setEditPFAccountNumber(result.data.pfAccountNumber);
-  //       setEditPANCard(result.data.panCard);
-  //       setEditCompanyId(result.data.companyId);
-  //       setEditLeave(result.data.leave);
-  //       setEditId(id);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
+  const handleEdit = (id) => {
+       let token =localStorage.getItem("currentUser");
+    //   //alert(id);
+    handleShow();
+    axios
+      .get(`http://localhost:5135/api/Designation/${id}`,{ headers: { Authorization: `Bearer ${token}` } })
+      .then((result) => {
+        setEditName(result.data.name);
+        setEditType(result.data.type);
+        setEditCompanyId(result.data.companyId);
+        setEditId(id);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleUpdate = () => {
+    let token = localStorage.getItem("currentUser");
+    const uRl = `http://localhost:5135/api/Designation/${editId}`;
+    const data = {
+      id: editId,
+      name: editName,
+      type: editType,
+      companyId: editCompanyId,
+    };
+    axios
+      .put(uRl, data, { headers: { Authorization: `Bearer ${token}` } })
+      .then((result) => {
+        // handleClose();
+        getData(id);
+        clear();
+        toast.success("data has been updated");
+      })
+      .catch((error) => {
+        toast.error(error);
+      });
+  };
 
   const handleSave = () => {
-   // let token =localStorage.getItem("currentUser");
-    const url = "https://localhost:7121/api/Designation";
+     let token =localStorage.getItem("currentUser");
+    const url = "http://localhost:5135/api/Designation";
     const data = {
       "name": name,
       "type": type,
-      "companyid":companyid,
+      "companyId": companyId,
     };
     axios
-      .post(url, data)
+      .post(url, data,{ headers: { Authorization: `Bearer ${token}` } })
       .then((result) => {
         getData(id);
         clear();
-        toast.success("Employee has been added In This Company");
+        toast.success("Designation has been added For This Employee");
       })
       .catch((error) => {
         toast.error(error);
@@ -97,25 +109,21 @@ const Designation = () => {
     setName("");
     setType("");
     setCompanyId(0);
-   
-    // setEditName("");
-    // setEditAddress("");
-    // setEditAccountNumber(0);
-    // setEditPFAccountNumber(0);
-    // setEditPANCard(0);
-    // setEditCompanyId(0);
-    // setEditLeave(0);
-    // setEditId("");
+
+    setEditName("");
+    setEditType("");
+    setEditCompanyId(0);
+    setEditId(0);
   };
 
   const handleDelete = (id) => {
-   // let token =localStorage.getItem("currentUser");
-    if (window.confirm("Are you sure to delete this data") == true) {
+     let token =localStorage.getItem("currentUser");
+    if (window.confirm("Are you sure to delete this data") === true) {
       axios
-        .delete(`https://localhost:7121/api/Designation/${id}`)
+        .delete(`http://localhost:5135/api/Designation/${id}`,{ headers: { Authorization: `Bearer ${token}` } })
         .then((result) => {
-          if (result.status === 200) {
-              getData(id);
+          if (result.data) {
+            getData(id);
             toast.success("Employee has been deleted");
           }
         })
@@ -127,10 +135,10 @@ const Designation = () => {
 
   return (
     <div>
-        <ToastContainer />
+      <ToastContainer />
       <Header />
       <div className="row">
-        <div className="col-8 text-left m-2">
+        <div className="col-4 text-left m-2">
           <h2 className="text-primary">Designation List</h2>
         </div>
         <br />
@@ -145,48 +153,51 @@ const Designation = () => {
           </button>
         </div>
       </div>
-      <div className="col-9 m-2 p-2">
+      <div className="col-6 m-2 p-2">
         <table className="table table-bordered table-striped table-active">
           <thead>
             <tr>
-            <th>#</th>
+              <th>#</th>
               <th>Name</th>
               <th>Type</th>
-              <th>CompanyId</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-          {data && data.length > 0
-                ? data.map((item, index) => {
-                    return (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{item.name}</td>
-                        <td>{item.type}</td>
-                        <td>{item.companyId}</td>
-                        {/* <td>{item.leave}</td> */}
-                        <td colSpan={2}>
-                          <button
-                            className="btn btn-info"
-                            //onClick={() => handleEdit(item.id)}
-                            data-target="#editModal"
-                            data-toggle="modal"
-                          >
-                            Edit
-                          </button>{" "}
-                          &nbsp;
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => handleDelete(item.id)}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                  : <h2 className="text-info">"Loading..."</h2>}
+            {data && data.length > 0 ? (
+              data.map((item, index) => {
+                return (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.name}</td>
+                    <td>{item.type}</td>
+                    {/* <td>{item.leave}</td> */}
+                    <td colSpan={2}>
+                      <button
+                        className="btn btn-info"
+                        onClick={() => handleEdit(item.id)}
+                        data-target="#editModal"
+                        data-toggle="modal"
+                        data-dismiss="modal"
+                      >
+                        Edit
+                      </button>{" "}
+                      &nbsp;
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleDelete(item.id)}
+                        data-toggle="modal"
+                        data-dismiss="modal"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <h2 className="text-info">"Loading..."</h2>
+            )}
           </tbody>
         </table>
         <button class="btn btn-info m-2 p-2" onClick={BackTo}>
@@ -206,49 +217,49 @@ const Designation = () => {
               </div>
               {/* <!-- Body --> */}
               <div class="modal-body">
-                  <div class="form-group row">
-                    <label for="txtname" class=" text-success col-sm-4">
-                      Name
-                    </label>
-                    <div class="col-8">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                      />
-                    </div>
+                <div class="form-group row">
+                  <label for="txtname" class=" text-success col-sm-4">
+                    Name
+                  </label>
+                  <div class="col-8">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
                   </div>
-                  <div class="form-group row">
-                    <label for="txttype" class="text-success col-sm-4">
-                      Type
-                    </label>
-                    <div class="col-8">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter Type"
-                        value={type}
-                        onChange={(e) => setType(e.target.value)}
-                      />
-                      </div>
-                      </div>
-                  <div class="form-group row">
-                    <label for="txtcompanyid" class=" text-success col-sm-4">
-                      CompanyId
-                    </label>
-                    <div class="col-8">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter Id"
-                        value={companyid}
-                        onChange={(e) => setCompanyId(e.target.value)}
-                      />
-                    </div>
+                </div>
+                <div class="form-group row">
+                  <label for="txttype" class="text-success col-sm-4">
+                    Type
+                  </label>
+                  <div class="col-8">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Type"
+                      value={type}
+                      onChange={(e) => setType(e.target.value)}
+                    />
                   </div>
-                  {/* <div class="form-group row">
+                </div>
+                <div class="form-group row">
+                  <label for="txtcompanyid" class=" text-success col-sm-4">
+                    CompanyId
+                  </label>
+                  <div class="col-8">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Id"
+                      value={companyId}
+                      onChange={(e) => setCompanyId(e.target.value)}
+                    />
+                  </div>
+                </div>
+                {/* <div class="form-group row">
                     <label for="txtleave" class="text-success col-sm-4">
                       Apply Leave
                     </label>
@@ -261,12 +272,87 @@ const Designation = () => {
                       />
                     </div>
                   </div> */}
+              </div>
+              {/* <!-- Footer --> */}
+              <div class="modal-footer">
+                <button
+                  className="btn btn-info"
+                  onClick={() => handleSave()}
+                  data-dismiss="modal"
+                >
+                  Submit
+                </button>
+                <button class="btn btn-danger">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      {/* <!-- Edit --> */}
+      <form>
+        <div class="modal" id="editModal" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content" show={show} onHide={handleClose}>
+              {/* <!-- Header --> */}
+              <div class="modal-header" >
+                <div class="modal-tittle text-primary">Edit Designation</div>
+                <button class="close" data-dismiss="modal">
+                  <span>&times;</span>
+                </button>
+              </div>
+              {/* <!-- Body --> */}
+              <div class="modal-body">
+                  <div class="form-group row">
+                    <label for="txtname" class=" text-success col-sm-4">
+                      Name
+                    </label>
+                    <div class="col-8">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter Name"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="txttype" class="text-success col-sm-4">
+                      Type
+                    </label>
+                    <div class="col-8">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter Type"
+                        value={editType}
+                        onChange={(e) => setEditType(e.target.value)}
+                      />
+                      </div>
+                      </div>
+                  <div class="form-group row">
+                    <label for="txtcompanyid" class=" text-success col-sm-4">
+                      CompanyId
+                    </label>
+                    <div class="col-8">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter Id"
+                        value={editCompanyId}
+                        onChange={(e) => setEditCompanyId(e.target.value)}
+                      />
+                    </div>
+                  </div>
                 </div>
               {/* <!-- Footer --> */}
               <div class="modal-footer">
                 <button
                   className="btn btn-info"
-                   onClick={() => handleSave()}
+                   onClick={() => handleUpdate()}
+                   data-toggle="modal"
                   data-dismiss="modal"
                 >
                   Submit
@@ -279,8 +365,6 @@ const Designation = () => {
           </div>
         </div>
       </form>
-      {/* <!-- Edit --> */}
-      
     </div>
   );
 };

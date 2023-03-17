@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
- import "bootstrap/dist/css/bootstrap.min.css";
- import Button from "react-bootstrap/Button";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Button from "react-bootstrap/Button";
 import axios from "axios";
 import Header from "./Header";
 import { ToastContainer, toast } from "react-toastify";
@@ -8,7 +8,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
 const Employee = () => {
-  
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -18,52 +17,73 @@ const Employee = () => {
   const [address, setAddress] = useState("");
   const [accountnumber, setAccountNumber] = useState("");
   const [pfaccountnumber, setPFAccountNumber] = useState("");
-  const[pancard,setPANCard]=useState("");
-  const[companyid,setCompanyId]=useState("");
-  const [leave, setLeave] = useState(0);
+  const [pancard, setPANCard] = useState("");
+  const [companyid, setCompanyId] = useState("");
 
   const [editId, setEditId] = useState("");
   const [editname, setEditName] = useState("");
   const [editaddress, setEditAddress] = useState("");
   const [editaccountnumber, setEditAccountNumber] = useState("");
   const [editpfaccountnumber, setEditPFAccountNumber] = useState("");
-  const[editpancard,setEditPANCard]=useState("");
-  const[editcompanyid,setEditCompanyId]=useState("");
-  const [editleave, setEditLeave] = useState(0);
+  const [editpancard, setEditPANCard] = useState("");
+  const [editcompanyid, setEditCompanyId] = useState("");
+
+  const navigate = useNavigate();
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    let token = JSON.parse(localStorage.getItem('currentUser'));
+    if(token == undefined){
+      return;
+    }
     getData();
   }, []);
 
   const getData = () => {
-    let token =localStorage.getItem("currentUser");
+    let token = JSON.parse(localStorage.getItem('currentUser')).token;
+   // const token = user.currentUser.id;
+   // let token = localStorage.getItem("currentUser");
     //console.log(token)
     axios
-      .get("https://localhost:7121/api/Employee",{headers: {Authorization: `Bearer ${token}`},})
+      .get("http://localhost:5135/api/Employee", { headers: {"Authorization" : `Bearer ${token}`} })
       .then((result) => {
         setData(result.data);
       })
       .catch((error) => {
+       
+      //  if(error.status === 401){
+      //   let data = json.parse(localStorage.getItem('currentUser'))
+      //   axios.post(`http://localhost:5135/User/RefreshToken`,{data:token,data:refreshtoken})
+      //   .then(result)(
+      //      data = json.parse(localStorage.getItem('currentUser'))
+      //     data : result.token
+      //     data: result.refreshtoken
+      //     localstroage.remove(currentUser)
+      //     localstorage.set('currentUSER',DATA)
+      //   )
+      //  }
+       
+       
+       
+
         toast.error(error);
       });
   };
 
   const handleSave = () => {
-    let token =localStorage.getItem("currentUser");
-    const url = "https://localhost:7121/api/Employee";
+    let token = JSON.parse(localStorage.getItem('currentUser')).token;
+    const url = "http://localhost:5135/api/Employee";
     const data = {
-      "name": name,
-      "address": address,
-      "accountnumber": accountnumber,
-      "pfaccountnumber": pfaccountnumber,
-      "pancard":pancard,
-      "companyid":companyid,
-      "leave": leave
+      name: name,
+      address: address,
+      accountnumber: accountnumber,
+      pfaccountnumber: pfaccountnumber,
+      pancard: pancard,
+      companyid: companyid,
     };
     axios
-      .post(url, data,{headers: {Authorization: `Bearer ${token}`},})
+      .post(url, data, { headers: { Authorization: `Bearer ${token}` } })
       .then((result) => {
         getData();
         clear();
@@ -81,39 +101,23 @@ const Employee = () => {
     setPFAccountNumber(0);
     setPANCard(0);
     setCompanyId(0);
-    setLeave(0);
     setEditName("");
     setEditAddress("");
     setEditAccountNumber(0);
     setEditPFAccountNumber(0);
     setEditPANCard(0);
     setEditCompanyId(0);
-    setEditLeave(0);
     setEditId("");
   };
 
-  const handleActiveChange = (e) => {
-    if (e.target.checked) {
-      setLeave(2);
-    } else {
-      setLeave(0);
-    }
-  };
-
-  const handleEditActiveChange = (e) => {
-    if (e.target.checked) {
-      setEditLeave(2);
-    } else {
-      setEditLeave(0);
-    }
-  };
-
   const handleEdit = (id) => {
-    let token =localStorage.getItem("currentUser");
+    let token = JSON.parse(localStorage.getItem('currentUser')).token;
     //alert(id);
     handleShow();
     axios
-      .get(`https://localhost:7121/api/Employee/${id}`,{headers: {Authorization: `Bearer ${token}`},})
+      .get(`http://localhost:5135/api/Employee/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((result) => {
         setEditName(result.data.name);
         setEditAddress(result.data.address);
@@ -121,7 +125,6 @@ const Employee = () => {
         setEditPFAccountNumber(result.data.pfAccountNumber);
         setEditPANCard(result.data.panCard);
         setEditCompanyId(result.data.companyId);
-        setEditLeave(result.data.leave);
         setEditId(id);
       })
       .catch((error) => {
@@ -130,10 +133,12 @@ const Employee = () => {
   };
 
   const handleDelete = (id) => {
-    let token =localStorage.getItem("currentUser");
-    if (window.confirm("Are you sure to delete this data") == true) {
+    let token = JSON.parse(localStorage.getItem('currentUser')).token;
+    if (window.confirm("Are you sure to delete this data") === true) {
       axios
-        .delete(`https://localhost:7121/api/Employee/${id}`,{headers: {Authorization: `Bearer ${token}`},})
+        .delete(`http://localhost:5135/api/Employee/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
         .then((result) => {
           if (result.status === 200) {
             toast.success("Employee has been deleted");
@@ -147,20 +152,19 @@ const Employee = () => {
   };
 
   const handleUpdate = () => {
-    let token =localStorage.getItem("currentUser");
-    const uRl = `https://localhost:7121/api/Employee/${editId}`;
+    let token = JSON.parse(localStorage.getItem('currentUser')).token;
+    const uRl = `http://localhost:5135/api/Employee/${editId}`;
     const data = {
       id: editId,
       name: editname,
       address: editaddress,
       accountnumber: editaccountnumber,
       pfaccountnumber: editpfaccountnumber,
-      pancard:editpancard,
-      companyid:editcompanyid,
-      leave: editleave,
+      pancard: editpancard,
+      companyid: editcompanyid,
     };
     axios
-      .put(uRl, data,{headers: {Authorization: `Bearer ${token}`},})
+      .put(uRl, data, { headers: { Authorization: `Bearer ${token}` } })
       .then((result) => {
         handleClose();
         getData();
@@ -170,6 +174,10 @@ const Employee = () => {
       .catch((error) => {
         toast.error(error);
       });
+  };
+
+  const LeaveForm = (id) => {
+    navigate("/leaveform", { state: { id: id } });
   };
 
   return (
@@ -209,39 +217,48 @@ const Employee = () => {
               </tr>
             </thead>
             <tbody>
-              {data && data.length > 0
-                ? data.map((item, index) => {
-                    return (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{item.name}</td>
-                        <td>{item.address}</td>
-                        <td>{item.accountNumber}</td>
-                        <td>{item.pfAccountNumber}</td>
-                        <td>{item.panCard}</td>
-                        <td>{item.companyId}</td>
-                        {/* <td>{item.leave}</td> */}
-                        <td colSpan={2}>
-                          <button
-                            className="btn btn-info"
-                            onClick={() => handleEdit(item.id)}
-                            data-target="#editModal"
-                            data-toggle="modal"
-                          >
-                            Edit
-                          </button>{" "}
-                          &nbsp;
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => handleDelete(item.id)}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                  : <h2 className="text-info">"Loading..."</h2>}
+              {data && data.length > 0 ? (
+                data.map((item, index) => {
+                  return (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{item.name}</td>
+                      <td>{item.address}</td>
+                      <td>{item.accountNumber}</td>
+                      <td>{item.pfAccountNumber}</td>
+                      <td>{item.panCard}</td>
+                      <td>{item.companyId}</td>
+                      {/* <td>{item.leave}</td> */}
+                      <td colSpan={3}>
+                        <button
+                          className="btn btn-info"
+                          onClick={() => handleEdit(item.id)}
+                          data-target="#editModal"
+                          data-toggle="modal"
+                        >
+                          Edit
+                        </button>{" "}
+                        &nbsp;
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          Delete
+                        </button>
+                        <button
+                          className="btn btn-info m-1"
+                          onClick={() => LeaveForm(item.id)}
+                          data-toggle="modal"
+                        >
+                          LeaveForm
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <h2 className="text-info">"Loading..."</h2>
+              )}
             </tbody>
           </table>
         </div>
@@ -293,7 +310,7 @@ const Employee = () => {
                     </label>
                     <div class="col-8">
                       <input
-                        type="text"
+                        type="number"
                         className="form-control"
                         placeholder="Enter AccountNumber"
                         value={accountnumber}
@@ -310,7 +327,7 @@ const Employee = () => {
                     </label>
                     <div class="col-8">
                       <input
-                        type="text"
+                        type="number"
                         className="form-control"
                         placeholder="Enter PFACcountNumber"
                         value={pfaccountnumber}
@@ -324,7 +341,7 @@ const Employee = () => {
                     </label>
                     <div class="col-8">
                       <input
-                        type="number"
+                        type="text"
                         className="form-control"
                         placeholder="Enter PANCard"
                         value={pancard}
@@ -343,19 +360,6 @@ const Employee = () => {
                         placeholder="Enter Id"
                         value={companyid}
                         onChange={(e) => setCompanyId(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="txtleave" class="text-success col-sm-4">
-                      Apply Leave
-                    </label>
-                    <div class="col-4">
-                      <input
-                        type="checkbox"
-                        checked={leave === 1 ? true : false}
-                        onChange={(e) => handleActiveChange(e)}
-                        value={leave}
                       />
                     </div>
                   </div>
@@ -456,7 +460,7 @@ const Employee = () => {
                     </label>
                     <div class="col-8">
                       <input
-                        type="number"
+                        type="text"
                         className="form-control"
                         placeholder="Enter PANCard"
                         value={editpancard}
@@ -475,19 +479,6 @@ const Employee = () => {
                         placeholder="Enter Id"
                         value={editcompanyid}
                         onChange={(e) => setEditCompanyId(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="txtleave" class="text-success col-sm-4">
-                      Apply Leave
-                    </label>
-                    <div class="col-4">
-                      <input
-                        type="checkbox"
-                        checked={editleave === 1 ? true : false}
-                        onChange={(e) => handleEditActiveChange(e)}
-                        value={editleave}
                       />
                     </div>
                   </div>

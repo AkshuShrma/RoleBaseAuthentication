@@ -11,5 +11,6 @@ namespace CompanyAPI.Models.DTO
         public string AccountNumber { get; set; }
         public string PFAccountNumber { get; set; }
         public int CompanyId { get; set; }
+       
     }
 }

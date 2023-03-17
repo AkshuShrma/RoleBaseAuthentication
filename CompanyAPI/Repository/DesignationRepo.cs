@@ -15,26 +15,27 @@ namespace CompanyAPI.Repository
         }
         public async Task AddDesignation(Designation designation)
         {
-            await _context.Designations.AddAsync(designation);
+            await _context.Designation.AddAsync(designation);
             await _context.SaveChangesAsync();
         }
         public async Task DeleteDesignation(int id)
         {
-            var desInDb = await _context.Designations.FindAsync(id);
-            _context.Designations.Remove(desInDb);
+            var desInDb = await _context.Designation.FindAsync(id);
+            _context.Designation.Remove(desInDb);
             await _context.SaveChangesAsync();
         }
         public async Task<List<Designation>> GetDesignation()
         {
-            return await _context.Designations.ToListAsync();
+            return await _context.Designation.ToListAsync();
         }
         public async Task<Designation> GetDesignationById(int id)
         {
-            return await _context.Designations.Include(x => x.Employees).Where(x => x.Id == id).FirstOrDefaultAsync();
+            return await _context.Designation.Where(x => x.Id == id).FirstOrDefaultAsync();
         }
         public async Task UpdateDesignation(int id, Designation designation)
         {
-            _context.Designations.Update(designation);
+           // await _context.Designations.Where(x=>x.CompanyId==id).FirstOrDefaultAsync();
+             _context.Designation.Update(designation);
             await _context.SaveChangesAsync();
         }
     }

@@ -10,6 +10,7 @@ namespace CompanyAPI.Models.DTO
             CreateMap<UserRegister, ApplicationUser>().ReverseMap();
             CreateMap<EmployeeDTO, Employee>().ReverseMap();
             CreateMap<CompanyDTO, Company>().ReverseMap();
+            CreateMap<LeaveDTO,LeaveType>().ReverseMap();
         }
     }
 }

@@ -8,7 +8,6 @@ function Register() {
     UserName: "",
     Role: "",
     Password: "",
-    
   };
   const [registerForm, setRegisterForm] = useState(initData);
   const [registerFormError, setRegisterFormError] = useState(initData);
@@ -39,10 +38,7 @@ function Register() {
     else {
       setRegisterFormError(initData);
       axios
-        .post(
-          "https://localhost:7121/User/Register",
-          registerForm
-        )
+        .post("http://localhost:5135/User/Register", registerForm)
         .then((d) => {
           if (d.data) {
             alert("Register Successfully");

@@ -5,9 +5,10 @@ import Company from './screens/Company';
 import Employee from './screens/Employee';
 import Login from './screens/Login';
 import Register from './screens/Register';
-import MyComponent from './screens/MyComponent';
 import Employees from "./screens/Employees";
 import Designation from "./screens/Designation";
+import LeaveForm from "./screens/LeaveForm";
+import LeaveList from "./screens/LeaveList";
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
         <Route path="company" element={<Company/>}/>
         <Route path="employees" element={<Employees/>}/>
         <Route path="designation" element={<Designation/>}/>
-        <Route path="mycomponent" element={<MyComponent/>}/>
+        <Route path="leaveform" element={<LeaveForm/>}/>
+        <Route path="leavelist" element={<LeaveList/>}/>
       </Routes>
       </BrowserRouter>
     </div>

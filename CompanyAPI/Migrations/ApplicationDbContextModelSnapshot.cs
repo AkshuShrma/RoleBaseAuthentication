@@ -105,6 +105,10 @@ namespace CompanyAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Country")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -113,11 +117,13 @@ namespace CompanyAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Company");
                 });
@@ -145,7 +151,7 @@ namespace CompanyAPI.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Designations");
+                    b.ToTable("Designation");
                 });
 
             modelBuilder.Entity("CompanyAPI.Models.Employee", b =>
@@ -170,15 +176,15 @@ namespace CompanyAPI.Migrations
                     b.Property<int?>("DesignationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PANCard")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PFAccountNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -189,6 +195,36 @@ namespace CompanyAPI.Migrations
                     b.HasIndex("DesignationId");
 
                     b.ToTable("Employee");
+                });
+
+            modelBuilder.Entity("CompanyAPI.Models.LeaveType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Leaves");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -324,6 +360,17 @@ namespace CompanyAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CompanyAPI.Models.Company", b =>
+                {
+                    b.HasOne("CompanyAPI.Data.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("CompanyAPI.Models.Designation", b =>
                 {
                     b.HasOne("CompanyAPI.Models.Company", null)
@@ -344,6 +391,17 @@ namespace CompanyAPI.Migrations
                     b.HasOne("CompanyAPI.Models.Designation", null)
                         .WithMany("Employees")
                         .HasForeignKey("DesignationId");
+                });
+
+            modelBuilder.Entity("CompanyAPI.Models.LeaveType", b =>
+                {
+                    b.HasOne("CompanyAPI.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

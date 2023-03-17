@@ -9,12 +9,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace CompanyAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Company+","+SD.Role_Employee)]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeRepo _employee;
@@ -45,23 +46,27 @@ namespace CompanyAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Employee employee)
         {
+            ApplicationUser user = new ApplicationUser()
+            {
+                UserName = employee.UserName,
+                PasswordHash = _userService.GeneratePassword(),
+                Role = SD.Role_Employee
+            };
             await _employee.AddEmployee(employee);
             if (employee == null) return BadRequest("Data Not Added");
             return Ok(employee);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Employee employee)
+        public async Task Update(int id, [FromBody] Employee employee)
         {
             await _employee.UpdateEmployee(id, employee);
-            if (employee == null) return BadRequest("Data Not Updated");
-            return Ok();
         }
+        [Authorize(Roles =SD.Role_Admin+","+SD.Role_Company)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _employee.DeleteEmployee(id);
-            if (id == 0) return BadRequest("Data is not Deleted");
-            return Ok();
+            return Ok("Data Deleted");
         }
     }
 }

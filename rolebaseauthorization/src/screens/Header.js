@@ -18,7 +18,7 @@ function Header() {
   };
   return (
     <div>
- <nav class="navbar navbar-expand-lg navbar-light bg-light">
+ <nav class="navbar navbar-expand-lg navbar-light bg-warning">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -26,6 +26,8 @@ function Header() {
     <ul class="navbar-nav">
       <li class="nav-item active">
         <Link to="/home" className="nav-link">
+        {/* <i class="fa-brands fa-apple"></i>  */}
+    
             Home
         </Link>
       </li>
@@ -49,9 +51,9 @@ function Header() {
 </Link>   
   )}  
   {user?(
-         <a onClick={logOutClick} className="btn btn-outline-success my-2 my-sm-0 m-1">
+         <href onClick={logOutClick} className="btn btn-outline-success my-2 my-sm-0 m-1">
          LogOut
-     </a>
+     </href>
   ):(
     <Link to="/login" className="btn btn-outline-success my-2 my-sm-0 m-1">
     Login

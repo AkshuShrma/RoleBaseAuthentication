@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace CompanyAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    //[Authorize(Roles = SD.Role_Admin + "," + SD.Role_Company)]
     public class CompanyController : ControllerBase
     {
         private readonly ICompany _company;
@@ -42,9 +43,24 @@ namespace CompanyAPI.Controllers
             return await _company.GetCompanyById(id);
         }
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Company company)
+        public async Task<IActionResult> Post([FromBody] CompanyDTO company)
         {
-            await _company.AddCompany(company);
+            if (company == null || !ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var companyDetail = _mapper.Map<Company>(company);
+            var passwordGen = "";
+            ApplicationUser user = new ApplicationUser()
+            {
+                UserName = company.UserName,
+                PasswordHash = _userService.GeneratePassword(),
+                Role = SD.Role_Company
+            };
+            passwordGen = user.PasswordHash;
+            var registerCompany = await _userService.RegisterUser(user);
+            companyDetail.ApplicationUserId = user.Id;
+            await _company.AddCompany(companyDetail);
             return Ok(company);
         }
         [HttpPut("{id}")]
@@ -53,12 +69,14 @@ namespace CompanyAPI.Controllers
             await _company.UpdateCompany(id, company);
         }
         [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             await _company.DeleteCompany(id);
+            return Ok("Data Deleted");
         }
         [HttpGet]
         [Route("Employees")]
+        [AllowAnonymous]
         public IActionResult Employee(int id)
         {
             var employees = _context.Employee.Where(e => e.CompanyId == id).ToList();
@@ -67,11 +85,21 @@ namespace CompanyAPI.Controllers
         }
         [HttpGet]
         [Route("Designations")]
-        public IActionResult Designation(int id)
+        [AllowAnonymous]
+        public IActionResult Designations(int id)
         {
-            var designations = _context.Designations.Where(e => e.CompanyId == id);
+            var designations = _context.Designation.Where(e => e.CompanyId == id).ToList();
             if (designations == null) return NotFound("No Designation In This Company");
             return Ok(designations);
+        }
+        [HttpGet]
+        [Route("Leaves")]
+        [AllowAnonymous]
+        public IActionResult Leaves(int id)
+        {
+            var leaves = _context.Leaves.Where(e => e.EmployeeId == id).ToList().Where(u => u.Status != (LeaveType.LeaveStatus)1).Where(u => u.Status != (LeaveType.LeaveStatus)3);
+            if (leaves==null ) return NotFound();
+            return Ok(leaves);
         }
     }
 }
