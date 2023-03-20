@@ -1,9 +1,9 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "./Header";
 import { toast, ToastContainer } from "react-toastify";
+import jwtInterceoptor from "./jwtInterceoptor";
 
 const Designation = () => {
   const [show, setShow] = useState(false);
@@ -30,10 +30,10 @@ const Designation = () => {
   }, [id]);
 
   const getData = (id) => {
-    let token = localStorage.getItem('currentUser');
+    //let token = localStorage.getItem('currentUser');
     // console.log(employeeList)
-    axios
-      .get(`http://localhost:5135/api/Company/Designations?id=${id}`,{ headers: { Authorization: `Bearer ${token}` } })
+    jwtInterceoptor
+      .get(`http://localhost:5135/api/Company/Designations?id=${id}`)
       .then((result) => {
         setData(result.data);
       })
@@ -50,7 +50,7 @@ const Designation = () => {
        let token =localStorage.getItem("currentUser");
     //   //alert(id);
     handleShow();
-    axios
+    jwtInterceoptor
       .get(`http://localhost:5135/api/Designation/${id}`,{ headers: { Authorization: `Bearer ${token}` } })
       .then((result) => {
         setEditName(result.data.name);
@@ -72,7 +72,7 @@ const Designation = () => {
       type: editType,
       companyId: editCompanyId,
     };
-    axios
+    jwtInterceoptor
       .put(uRl, data, { headers: { Authorization: `Bearer ${token}` } })
       .then((result) => {
         // handleClose();
@@ -93,7 +93,7 @@ const Designation = () => {
       "type": type,
       "companyId": companyId,
     };
-    axios
+    jwtInterceoptor
       .post(url, data,{ headers: { Authorization: `Bearer ${token}` } })
       .then((result) => {
         getData(id);
@@ -119,7 +119,7 @@ const Designation = () => {
   const handleDelete = (id) => {
      let token =localStorage.getItem("currentUser");
     if (window.confirm("Are you sure to delete this data") === true) {
-      axios
+      jwtInterceoptor
         .delete(`http://localhost:5135/api/Designation/${id}`,{ headers: { Authorization: `Bearer ${token}` } })
         .then((result) => {
           if (result.data) {

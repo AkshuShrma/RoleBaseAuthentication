@@ -73,13 +73,6 @@ D:\core 6.0\CompanyAPI\CompanyAPI\obj\Debug\net6.0\refint\CompanyAPI.dll
 D:\core 6.0\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.pdb
 D:\core 6.0\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.genruntimeconfig.cache
 D:\core 6.0\CompanyAPI\CompanyAPI\obj\Debug\net6.0\ref\CompanyAPI.dll
-D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.csproj.AssemblyReference.cache
-D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.GeneratedMSBuildEditorConfig.editorconfig
-D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.AssemblyInfoInputs.cache
-D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.AssemblyInfo.cs
-D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.csproj.CoreCompileInputs.cache
-D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.MvcApplicationPartsAssemblyInfo.cs
-D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.MvcApplicationPartsAssemblyInfo.cache
 D:\Ak\CompanyAPI\CompanyAPI\bin\Debug\net6.0\appsettings.Development.json
 D:\Ak\CompanyAPI\CompanyAPI\bin\Debug\net6.0\appsettings.json
 D:\Ak\CompanyAPI\CompanyAPI\bin\Debug\net6.0\CompanyAPI.exe
@@ -135,6 +128,13 @@ D:\Ak\CompanyAPI\CompanyAPI\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\Syst
 D:\Ak\CompanyAPI\CompanyAPI\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 D:\Ak\CompanyAPI\CompanyAPI\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 D:\Ak\CompanyAPI\CompanyAPI\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
+D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.csproj.AssemblyReference.cache
+D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.GeneratedMSBuildEditorConfig.editorconfig
+D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.AssemblyInfoInputs.cache
+D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.AssemblyInfo.cs
+D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.csproj.CoreCompileInputs.cache
+D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.MvcApplicationPartsAssemblyInfo.cs
+D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\CompanyAPI.MvcApplicationPartsAssemblyInfo.cache
 D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\staticwebassets\msbuild.CompanyAPI.Microsoft.AspNetCore.StaticWebAssets.props
 D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\staticwebassets\msbuild.build.CompanyAPI.props
 D:\Ak\CompanyAPI\CompanyAPI\obj\Debug\net6.0\staticwebassets\msbuild.buildMultiTargeting.CompanyAPI.props

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CompanyAPI.Migrations
 {
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -162,6 +162,7 @@ namespace CompanyAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -206,17 +207,24 @@ namespace CompanyAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PANCard = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PFAccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CompanyId = table.Column<int>(type: "int", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     DesignationId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employee", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Employee_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Employee_Company_CompanyId",
                         column: x => x.CompanyId,
@@ -301,6 +309,11 @@ namespace CompanyAPI.Migrations
                 name: "IX_Designation_CompanyId",
                 table: "Designation",
                 column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employee_ApplicationUserId",
+                table: "Employee",
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employee_CompanyId",

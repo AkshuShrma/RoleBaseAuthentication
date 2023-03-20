@@ -9,12 +9,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 
 namespace CompanyAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = SD.Role_Admin + "," + SD.Role_Company)]
+    [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Company)]
     public class CompanyController : ControllerBase
     {
         private readonly ICompany _company;
@@ -30,12 +32,28 @@ namespace CompanyAPI.Controllers
             _mapper = mapper;
             _company = company;
         }
+        [Route("GetSpecificCompany")]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var compnies = await _company.GetCompanies();
-            if (compnies == null) return BadRequest("No Company Found");
-            return Ok(compnies);
+            ClaimsIdentity? claimIdentity = User?.Identity as ClaimsIdentity;
+            if (claimIdentity == null) { return BadRequest(); }
+            var claim = claimIdentity.FindFirst(ClaimTypes.Name);
+            if (claim == null) { return BadRequest(); }
+            var getUserDetailed = await _userService.CheckUserInDb(claim.Value);
+            if (getUserDetailed == null) { return BadRequest(); }
+
+                if(getUserDetailed.Role == "Admin")
+                {
+                    var compnies = await _company.GetCompanies();
+                    if (compnies == null) return BadRequest("No Company Found");
+                    return Ok(compnies);
+                }
+            var specificCompany = new List<Company>();
+                var findCompany = _context.Company.FirstOrDefault(u => u.ApplicationUserId == getUserDetailed.Id);
+                if (findCompany == null) return BadRequest("No Company Found");
+            specificCompany.Add(findCompany);
+            return Ok(specificCompany);
         }
         [HttpGet("{id}")]
         public async Task<Company> GetById(int id)
@@ -45,23 +63,28 @@ namespace CompanyAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CompanyDTO company)
         {
-            if (company == null || !ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (company == null || !ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var companyDetail = _mapper.Map<Company>(company);
+                ApplicationUser user = new ApplicationUser()
+                {
+                    UserName = company.UserName,
+                    PasswordHash = "Admin@123",
+                    Role = SD.Role_Company
+                };
+                var registerCompany = await _userService.RegisterUser(user);
+                companyDetail.ApplicationUserId = user.Id;
+                await _company.AddCompany(companyDetail);
+                return Ok(companyDetail);
             }
-            var companyDetail = _mapper.Map<Company>(company);
-            var passwordGen = "";
-            ApplicationUser user = new ApplicationUser()
+            catch (Exception)
             {
-                UserName = company.UserName,
-                PasswordHash = _userService.GeneratePassword(),
-                Role = SD.Role_Company
-            };
-            passwordGen = user.PasswordHash;
-            var registerCompany = await _userService.RegisterUser(user);
-            companyDetail.ApplicationUserId = user.Id;
-            await _company.AddCompany(companyDetail);
-            return Ok(company);
+                throw;
+            }
         }
         [HttpPut("{id}")]
         public async Task Update(int id, [FromBody] Company company)
@@ -71,8 +94,34 @@ namespace CompanyAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _company.DeleteCompany(id);
-            return Ok("Data Deleted");
+            try
+            {
+                var company = _context.Company.FirstOrDefault(u => u.Id == id);
+                if (company == null) return NotFound("Id not macth");
+                var commpanyEmployee = _context.Employee.Where(u => u.CompanyId == company.Id);
+                if (commpanyEmployee != null)
+                {
+                    _context.Employee.RemoveRange(commpanyEmployee);
+                }
+                var getEmpDesignation = _context.Designation.Where(u => u.CompanyId == company.Id);
+                if (getEmpDesignation != null)
+                {
+                    _context.Designation.RemoveRange(getEmpDesignation);
+                }
+                await _company.DeleteCompany(id);
+                var getASPNetUsers = await _userManager.FindByIdAsync(company.ApplicationUserId);
+                if (getASPNetUsers == null) return BadRequest();
+                // remove applicationuser all data related company employee or designaton... 
+                if (!_userManager.DeleteAsync(getASPNetUsers).Result.Succeeded)
+                {
+                    return NotFound("Company not found");
+                }
+                return Ok(getASPNetUsers);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
         [HttpGet]
         [Route("Employees")]

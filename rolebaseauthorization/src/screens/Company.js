@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import axios from "axios";
 import Header from "./Header";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import jwtInterceoptor from "./jwtInterceoptor";
 
 const Company = () => {
 
@@ -15,61 +15,55 @@ const Company = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const [name, setName] = useState("");
   const [userName, setUserName] = useState("");
   const [address, setAddress] = useState("");
   const [country, setCountry] = useState("");
   const [gst, setGst] = useState("");
   const [applicationUserId, setApplicationUserId] = useState("");
-  //const [password, setPassword] = useState(0);
 
   const [editId, setEditId] = useState("");
+  const [editName, setEditName] = useState("");
   const [editusername, setEditUserName] = useState("");
   const [editaddress, setEditAddress] = useState("");
   const [editcountry, setEditCountry] = useState("");
   const [editgst, setEditGst] = useState("");
-  // const [editrole, setEditRole] = useState("");
   const [editapplicationUserId, setEditApplicationUserId] = useState(0);
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    // let token = JSON.parse(localStorage.getItem('currentUser'));
-    // if(token === undefined){
-    //   return;
-    // }
     getData();
   }, []);
 
   const getData = () => {
-   // let token = JSON.parse(localStorage.getItem('currentUser')).token;
-    //console.log(token)
-    axios
-       .get("http://localhost:5135/api/Company")
+    jwtInterceoptor
+       .get(`http://localhost:5135/api/Company/GetSpecificCompany`)
       .then((result) => {
         setData(result.data);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
   };
 
   const handleSave = () => {
-    //let token = JSON.parse(localStorage.getItem('currentUser')).token;
     const url = "http://localhost:5135/api/Company";
     const data = {
+      name: name,
       username: userName,
       address: address,
       country: country,
       gst: gst,
-      // role: role,
       applicationUserId: applicationUserId,
     };
-    axios
+    jwtInterceoptor
       .post(url, data)
       .then((result) => {
+        console.log(result.data)
+        toast.success(result.data);
         getData();
         clear();
-        toast.success("Company has been added");
       })
       .catch((error) => {
         toast.error(error);
@@ -77,33 +71,30 @@ const Company = () => {
   };
 
   const clear = () => {
+    setName("");
     setUserName("");
     setAddress("");
     setCountry("");
     setGst("");
      setApplicationUserId("");
-    //setPassword(0);
+    setEditName("");
     setEditUserName("");
     setEditAddress("");
     setEditCountry("");
     setEditGst("");
-    // setEditRole("");
-    //setEditPassword(0);
     setEditId("");
   };
 
   const handleEdit = (id) => {
-    let token = JSON.parse(localStorage.getItem('currentUser')).token;
-    // alert(id);
     handleShow();
-    axios
-      .get(`http://localhost:5135/api/Company/${id}`,{headers:{Authorization:`Bearer ${token}`},})
+    jwtInterceoptor
+      .get(`http://localhost:5135/api/Company/${id}`)
       .then((result) => {
+        setEditName(result.data.name);
         setEditUserName(result.data.userName);
         setEditAddress(result.data.address);
         setEditCountry(result.data.country);
         setEditGst(result.data.gst);
-        // setEditRole(result.data.role);
         setApplicationUserId(result.data.applicationUserId);
         setEditId(id);
       })
@@ -113,10 +104,9 @@ const Company = () => {
   };
 
   const handleDelete = (id) => {
-    let token = JSON.parse(localStorage.getItem('currentUser')).token;
     if (window.confirm("Are you sure to delete this data") === true) {
-      axios
-        .delete(`http://localhost:5135/api/Company/${id}`,{headers:{Authorization:`Bearer ${token}`},})
+      jwtInterceoptor
+        .delete(`http://localhost:5135/api/Company/${id}`)
         .then((result) => {
           if (result.status === 200) {
             toast.success("Company has been deleted");
@@ -130,19 +120,18 @@ const Company = () => {
   };
 
   const handleUpdate = () => {
-    let token = JSON.parse(localStorage.getItem('currentUser')).token;
     const uRl = `http://localhost:5135/api/Company/${editId}`;
     const data = {
       id: editId,
+      name: editName,
       username: editusername,
       address: editaddress,
       country: editcountry,
       gst: editgst,
-      // role: editrole,
-      applicationUserId: editapplicationUserId,
+      applicationUserId: applicationUserId,
     };
-    axios
-      .put(uRl, data,{headers:{Authorization:`Bearer ${token}`},})
+    jwtInterceoptor
+      .put(uRl, data)
       .then((result) => {
         handleClose();
         getData();
@@ -185,11 +174,10 @@ const Company = () => {
               <tr>
                 <th>#</th>
                 <th>Name</th>
+                <th>UserName</th>
                 <th>Address</th>
                 <th>Country</th>
                 <th>GST</th>
-                {/* <th>Designation</th>  */}
-                {/* <th>Password</th> */}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -199,12 +187,11 @@ const Company = () => {
                     return (
                       <tr key={index}>
                         <td>{index + 1}</td>
+                        <td>{item.name}</td>
                         <td>{item.userName}</td>
                         <td>{item.address}</td>
                         <td>{item.country}</td>
                         <td>{item.gst}</td>
-                        {/* <td>{item.role}</td> */}
-                        {/* <td>{item.password}</td>  */}
                         <td colSpan={2}>
                           <button
                             className="btn btn-info"
@@ -248,9 +235,23 @@ const Company = () => {
                 </div>
                 {/* <!-- Body --> */}
                 <div class="modal-body">
+                <div class="form-group row">
+                  <label for="txtname" class=" text-success col-sm-4">
+                    Name
+                  </label>
+                  <div class="col-8">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                </div>
                   <div class="form-group row">
                     <label for="txtusername" class=" text-success col-sm-4">
-                      Name
+                      UserName
                     </label>
                     <div class="col-8">
                       <input
@@ -307,34 +308,6 @@ const Company = () => {
                       />
                     </div>
                   </div>
-                  {/* <div class="form-group row">
-                    <label for="txtrolr" class="text-success col-sm-4">
-                      Role
-                    </label>
-                    <div class="col-8">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter Role"
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                      />
-                    </div>
-                  </div> */}
-                  {/* <div class="form-group row">
-                    <label for="txtpassword" class="text-success col-sm-4">
-                      Password
-                    </label>
-                    <div class="col-8">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </div>
-                  </div> */}
                 </div>
                 {/* <!-- Footer --> */}
                 <div class="modal-footer">
@@ -367,9 +340,23 @@ const Company = () => {
                 </div>
                 {/* <!-- Body --> */}
                 <div class="modal-body">
+                <div class="form-group row">
+                    <label for="txtname" class=" text-success col-sm-4">
+                      Name
+                    </label>
+                    <div class="col-8">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter Name"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                      />
+                    </div>
+                  </div>
                   <div class="form-group row">
                     <label for="txtusername" class=" text-success col-sm-4">
-                      Name
+                      UserName
                     </label>
                     <div class="col-8">
                       <input
@@ -426,34 +413,6 @@ const Company = () => {
                       />
                     </div>
                   </div>
-                  {/* <div class="form-group row">
-                    <label for="txtrolr" class="text-success col-sm-4">
-                      Role
-                    </label>
-                    <div class="col-8">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter Role"
-                        value={editrole}
-                        onChange={(e) => setEditRole(e.target.value)}
-                      />
-                    </div>
-                  </div> */}
-                  {/* <div class="form-group row">
-                    <label for="txtpassword" class="text-success col-sm-4">
-                      Password
-                    </label>
-                    <div class="col-8">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Enter Password"
-                        value={editpassword}
-                        onChange={(e) => setEditPassword(e.target.value)}
-                      />
-                    </div>
-                  </div> */}
                 </div>
                 {/* <!-- Footer --> */}
                 <div class="modal-footer">

@@ -26,6 +26,7 @@ function App() {
         <Route path="designation" element={<Designation/>}/>
         <Route path="leaveform" element={<LeaveForm/>}/>
         <Route path="leavelist" element={<LeaveList/>}/>
+        <Route path="jwtinterceoptor" element={<jwtInterceoptor/>}/>
       </Routes>
       </BrowserRouter>
     </div>

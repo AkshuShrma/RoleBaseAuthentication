@@ -55,11 +55,11 @@ namespace CompanyAPI.Services
         public async Task<bool> RegisterUser(ApplicationUser user)
         {
             if (await _roleManagaer.FindByNameAsync(user.Role) == null) return false;
-            if (user.Role == SD.Role_Admin)
-            {
-                var CheckAdmin = await _userManager.GetUsersInRoleAsync(SD.Role_Admin);
-                if (CheckAdmin.Count == 1) return false;
-            }
+            //if (user.Role == SD.Role_Admin)
+            //{
+            //    var CheckAdmin = await _userManager.GetUsersInRoleAsync(SD.Role_Admin);
+            //    if (CheckAdmin.Count == 1) return false;
+            //}
             var users = await _userManager.CreateAsync(user, user.PasswordHash);
             if (!users.Succeeded) return false;
             await _userManager.AddToRoleAsync(user, user.Role);

@@ -52,7 +52,7 @@ namespace CompanyAPI.Controllers
         [Route("RefreshToken")]
         [HttpPost]
         public async Task<IActionResult> RefreshToken(Refreshtoken userToken)
-        {
+       {
             if (userToken == null || !ModelState.IsValid)
             {
                 return BadRequest();

@@ -121,9 +121,9 @@ using (IServiceScope scope = serviceScopeFactory.CreateScope())
         await roleManager.CreateAsync(role);
     }
 }
+app.UseCors("My");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("My");
 app.MapControllers();
 
 app.Run();

@@ -12,7 +12,7 @@ namespace CompanyAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = SD.Role_Admin+","+SD.Role_Company)]
+    //[Authorize(Roles = SD.Role_Admin+","+SD.Role_Company)]
     public class DesignationController : ControllerBase
     {
         private readonly IDesignationRepo _designation;
@@ -39,7 +39,6 @@ namespace CompanyAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Designation designation)
         {
-
             await _designation.AddDesignation(designation);
             return Ok(designation);
         }

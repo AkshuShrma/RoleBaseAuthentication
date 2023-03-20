@@ -1,8 +1,8 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import Header from "./Header";
+import jwtInterceoptor from "./jwtInterceoptor";
 
 function LeaveForm() {
   const [data, setData] = useState([]);
@@ -24,7 +24,7 @@ function LeaveForm() {
   const getData = (id) => {
     //const token = localStorage.getItem('currentUser');
     // console.log(employeeList)
-    axios
+    jwtInterceoptor
       .get(`http://localhost:5135/api/Company/Leaves?id=${id}`)
       .then((result) => {
         setData(result.data);
@@ -44,7 +44,7 @@ function LeaveForm() {
       employeeId: employeeId,
       status: "pending",
     };
-    axios
+    jwtInterceoptor
       .post(url, data)
       .then((result) => {
         getData(id);

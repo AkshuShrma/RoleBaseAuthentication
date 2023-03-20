@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
-import axios from "axios";
 import Header from "./Header";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import jwtInterceoptor from "./jwtInterceoptor";
 
 const Employee = () => {
   const [show, setShow] = useState(false);
@@ -14,76 +14,59 @@ const Employee = () => {
   const handleShow = () => setShow(true);
 
   const [name, setName] = useState("");
+  const [userName, setUserName] = useState("");
   const [address, setAddress] = useState("");
   const [accountnumber, setAccountNumber] = useState("");
   const [pfaccountnumber, setPFAccountNumber] = useState("");
   const [pancard, setPANCard] = useState("");
   const [companyid, setCompanyId] = useState("");
+  const [applicationUserId, setApplicationUserId] = useState("");
 
   const [editId, setEditId] = useState("");
   const [editname, setEditName] = useState("");
+  const [editusername, setEditUserName] = useState("");
   const [editaddress, setEditAddress] = useState("");
   const [editaccountnumber, setEditAccountNumber] = useState("");
   const [editpfaccountnumber, setEditPFAccountNumber] = useState("");
   const [editpancard, setEditPANCard] = useState("");
   const [editcompanyid, setEditCompanyId] = useState("");
+  const [editapplicationUserId, setEditApplicationUserId] = useState(0);
+
+
 
   const navigate = useNavigate();
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    let token = JSON.parse(localStorage.getItem('currentUser'));
-    if(token == undefined){
-      return;
-    }
     getData();
   }, []);
 
   const getData = () => {
-    let token = JSON.parse(localStorage.getItem('currentUser')).token;
-   // const token = user.currentUser.id;
-   // let token = localStorage.getItem("currentUser");
-    //console.log(token)
-    axios
-      .get("http://localhost:5135/api/Employee", { headers: {"Authorization" : `Bearer ${token}`} })
+    jwtInterceoptor
+      .get("http://localhost:5135/api/Employee")
       .then((result) => {
         setData(result.data);
       })
       .catch((error) => {
-       
-      //  if(error.status === 401){
-      //   let data = json.parse(localStorage.getItem('currentUser'))
-      //   axios.post(`http://localhost:5135/User/RefreshToken`,{data:token,data:refreshtoken})
-      //   .then(result)(
-      //      data = json.parse(localStorage.getItem('currentUser'))
-      //     data : result.token
-      //     data: result.refreshtoken
-      //     localstroage.remove(currentUser)
-      //     localstorage.set('currentUSER',DATA)
-      //   )
-      //  }
-       
-       
-       
-
         toast.error(error);
       });
   };
 
   const handleSave = () => {
-    let token = JSON.parse(localStorage.getItem('currentUser')).token;
     const url = "http://localhost:5135/api/Employee";
     const data = {
       name: name,
+      username: userName,
       address: address,
       accountnumber: accountnumber,
       pfaccountnumber: pfaccountnumber,
       pancard: pancard,
       companyid: companyid,
+      applicationUserId: applicationUserId,
     };
-    axios
-      .post(url, data, { headers: { Authorization: `Bearer ${token}` } })
+    jwtInterceoptor
+      .post(url, data)
       .then((result) => {
         getData();
         clear();
@@ -96,35 +79,37 @@ const Employee = () => {
 
   const clear = () => {
     setName("");
+    setUserName("");
     setAddress("");
     setAccountNumber(0);
     setPFAccountNumber(0);
     setPANCard(0);
     setCompanyId(0);
+    setApplicationUserId("");
     setEditName("");
+    setEditUserName("");
     setEditAddress("");
     setEditAccountNumber(0);
     setEditPFAccountNumber(0);
     setEditPANCard(0);
     setEditCompanyId(0);
+    setEditApplicationUserId("");
     setEditId("");
   };
 
   const handleEdit = (id) => {
-    let token = JSON.parse(localStorage.getItem('currentUser')).token;
-    //alert(id);
     handleShow();
-    axios
-      .get(`http://localhost:5135/api/Employee/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    jwtInterceoptor
+      .get(`http://localhost:5135/api/Employee/${id}`)
       .then((result) => {
         setEditName(result.data.name);
+        setEditUserName(result.data.userName);
         setEditAddress(result.data.address);
         setEditAccountNumber(result.data.accountNumber);
         setEditPFAccountNumber(result.data.pfAccountNumber);
         setEditPANCard(result.data.panCard);
         setEditCompanyId(result.data.companyId);
+        setApplicationUserId(result.data.applicationUserId);
         setEditId(id);
       })
       .catch((error) => {
@@ -133,12 +118,9 @@ const Employee = () => {
   };
 
   const handleDelete = (id) => {
-    let token = JSON.parse(localStorage.getItem('currentUser')).token;
     if (window.confirm("Are you sure to delete this data") === true) {
-      axios
-        .delete(`http://localhost:5135/api/Employee/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+      jwtInterceoptor
+        .delete(`http://localhost:5135/api/Employee/${id}`)
         .then((result) => {
           if (result.status === 200) {
             toast.success("Employee has been deleted");
@@ -152,19 +134,20 @@ const Employee = () => {
   };
 
   const handleUpdate = () => {
-    let token = JSON.parse(localStorage.getItem('currentUser')).token;
     const uRl = `http://localhost:5135/api/Employee/${editId}`;
     const data = {
       id: editId,
       name: editname,
+      username: editusername,
       address: editaddress,
       accountnumber: editaccountnumber,
       pfaccountnumber: editpfaccountnumber,
       pancard: editpancard,
       companyid: editcompanyid,
+      applicationUserId: applicationUserId,
     };
-    axios
-      .put(uRl, data, { headers: { Authorization: `Bearer ${token}` } })
+    jwtInterceoptor
+      .put(uRl, data)
       .then((result) => {
         handleClose();
         getData();
@@ -207,12 +190,12 @@ const Employee = () => {
               <tr>
                 <th>#</th>
                 <th>Name</th>
+                <th>UserName</th>
                 <th>Address</th>
                 <th>AccountNumber</th>
                 <th>PFAccountNumber</th>
                 <th>PANCard</th>
                 <th>CompanyId</th>
-                {/* <th>Leave</th> */}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -223,12 +206,12 @@ const Employee = () => {
                     <tr key={index}>
                       <td>{index + 1}</td>
                       <td>{item.name}</td>
+                      <td>{item.userName}</td>
                       <td>{item.address}</td>
                       <td>{item.accountNumber}</td>
                       <td>{item.pfAccountNumber}</td>
                       <td>{item.panCard}</td>
                       <td>{item.companyId}</td>
-                      {/* <td>{item.leave}</td> */}
                       <td colSpan={3}>
                         <button
                           className="btn btn-info"
@@ -290,6 +273,20 @@ const Employee = () => {
                       />
                     </div>
                   </div>
+                  <div className="form-group row">
+                  <label for="txtusername" className=" text-success col-sm-4">
+                    UserName
+                  </label>
+                  <div className="col-8">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Name"
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                    />
+                  </div>
+                </div>
                   <div class="form-group row">
                     <label for="txtaddress" class="text-success col-sm-4">
                       Address
@@ -310,7 +307,7 @@ const Employee = () => {
                     </label>
                     <div class="col-8">
                       <input
-                        type="number"
+                        type="text"
                         className="form-control"
                         placeholder="Enter AccountNumber"
                         value={accountnumber}
@@ -327,7 +324,7 @@ const Employee = () => {
                     </label>
                     <div class="col-8">
                       <input
-                        type="number"
+                        type="text"
                         className="form-control"
                         placeholder="Enter PFACcountNumber"
                         value={pfaccountnumber}
@@ -409,6 +406,20 @@ const Employee = () => {
                       />
                     </div>
                   </div>
+                  <div className="form-group row">
+                  <label for="txtusername" className=" text-success col-sm-4">
+                    UserName
+                  </label>
+                  <div className="col-8">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Name"
+                      value={editusername}
+                      onChange={(e) => setEditUserName(e.target.value)}
+                    />
+                  </div>
+                </div>
                   <div class="form-group row">
                     <label for="txtaddress" class="text-success col-sm-4">
                       Address
@@ -429,7 +440,7 @@ const Employee = () => {
                     </label>
                     <div class="col-8">
                       <input
-                        type="number"
+                        type="text"
                         className="form-control"
                         placeholder="Enter AccountNumber"
                         value={editaccountnumber}
@@ -446,7 +457,7 @@ const Employee = () => {
                     </label>
                     <div class="col-8">
                       <input
-                        type="number"
+                        type="text"
                         className="form-control"
                         placeholder="Enter PFAccountNumber"
                         value={editpfaccountnumber}
@@ -463,6 +474,7 @@ const Employee = () => {
                         type="text"
                         className="form-control"
                         placeholder="Enter PANCard"
+                        readOnly
                         value={editpancard}
                         onChange={(e) => setEditPANCard(e.target.value)}
                       />

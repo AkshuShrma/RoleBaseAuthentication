@@ -1,8 +1,9 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import Header from "./Header";
+import jwtInterceoptor from "./jwtInterceoptor";
+
 
 function LeaveList() {
   const [data, setData] = useState([]);
@@ -24,7 +25,7 @@ function LeaveList() {
   const getData = (id) => {
     //const token = localStorage.getItem('currentUser');
     // console.log(employeeList)
-    axios
+    jwtInterceoptor
       .get(`http://localhost:5135/api/Company/Leaves?id=${id}`)
       .then((result) => {
         setData(result.data);
@@ -44,7 +45,7 @@ function LeaveList() {
       employeeId: employeeId,
       status: 1,
     };
-    axios
+    jwtInterceoptor
       .put(url, data)
       .then((result) => {
         getData(id);
@@ -61,7 +62,7 @@ function LeaveList() {
       employeeId: employeeId,
       status: 3,
     };
-    axios
+    jwtInterceoptor
       .put(url, data)
       .then((result) => {
         getData(id);

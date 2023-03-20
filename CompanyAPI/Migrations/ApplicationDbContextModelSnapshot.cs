@@ -117,6 +117,10 @@ namespace CompanyAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -170,11 +174,18 @@ namespace CompanyAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<int?>("DesignationId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PANCard")
                         .IsRequired()
@@ -189,6 +200,8 @@ namespace CompanyAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("CompanyId");
 
@@ -382,6 +395,10 @@ namespace CompanyAPI.Migrations
 
             modelBuilder.Entity("CompanyAPI.Models.Employee", b =>
                 {
+                    b.HasOne("CompanyAPI.Data.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("CompanyAPI.Models.Company", null)
                         .WithMany("Employees")
                         .HasForeignKey("CompanyId")
@@ -391,6 +408,8 @@ namespace CompanyAPI.Migrations
                     b.HasOne("CompanyAPI.Models.Designation", null)
                         .WithMany("Employees")
                         .HasForeignKey("DesignationId");
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("CompanyAPI.Models.LeaveType", b =>
